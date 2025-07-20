@@ -21,10 +21,10 @@ interface BaseGameState {
 }
 
 // Do not change!
-export type Action = DefaultAction | GameAction;
+export type Action = DefaultAction | GameAction | ChatAction;
 
 // Do not change!
-export type ServerAction = WithUser<DefaultAction> | WithUser<GameAction>;
+export type ServerAction = WithUser<DefaultAction> | WithUser<GameAction> | WithUser<ChatAction>;
 
 // The maximum log size, change as needed
 const MAX_LOG_SIZE = 4;
@@ -48,6 +48,9 @@ export const initialGame = () => ({
 
 // Here are all the actions we can dispatch for a user
 type GameAction = { type: "guess"; guess: number };
+
+// Chat action type
+type ChatAction = { type: "chat"; message: string };
 
 export const gameUpdater = (
   action: ServerAction,
@@ -93,5 +96,12 @@ export const gameUpdater = (
           ),
         };
       }
+    case "chat":
+      return {
+        ...state,
+        log: addLog(`💬 ${action.user.id}: ${action.message}`, state.log),
+      };
+    default:
+      return state;
   }
-};
+}
